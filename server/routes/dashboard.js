@@ -112,6 +112,33 @@ router.get('/', (req, res) => {
     result.pinnedNotes = [];
   }
 
+  // Einkaufslisten mit offenen Artikeln (max. 3 Listen, je bis zu 6 offene Items)
+  try {
+    const lists = d.prepare(`
+      SELECT sl.id, sl.name,
+        (SELECT COUNT(*) FROM shopping_items si WHERE si.list_id = sl.id AND si.is_checked = 0) AS open_count,
+        (SELECT COUNT(*) FROM shopping_items si WHERE si.list_id = sl.id) AS total_count
+      FROM shopping_lists sl
+      HAVING open_count > 0
+      ORDER BY sl.updated_at DESC
+      LIMIT 3
+    `).all();
+
+    for (const list of lists) {
+      list.items = d.prepare(`
+        SELECT id, name, quantity, is_checked
+        FROM shopping_items
+        WHERE list_id = ? AND is_checked = 0
+        ORDER BY id ASC
+        LIMIT 6
+      `).all(list.id);
+    }
+    result.shoppingLists = lists;
+  } catch (err) {
+    log.error('shoppingLists-Fehler:', err.message);
+    result.shoppingLists = [];
+  }
+
   // Alle User (für Avatar-Farben in Widgets)
   try {
     result.users = d.prepare(

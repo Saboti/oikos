@@ -75,7 +75,8 @@
     "overdue": "Overdue",
     "dueSoon": "Due today",
     "dueTomorrow": "Due tomorrow",
-    "allDay": "All day"
+    "allDay": "All day",
+    "shoppingMore": "+{{count}} more"
   },
 
   "tasks": {

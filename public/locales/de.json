@@ -75,7 +75,8 @@
     "overdue": "Überfällig",
     "dueSoon": "Heute fällig",
     "dueTomorrow": "Morgen fällig",
-    "allDay": "Ganztägig"
+    "allDay": "Ganztägig",
+    "shoppingMore": "+{{count}} weitere"
   },
 
   "tasks": {

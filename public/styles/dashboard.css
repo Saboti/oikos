@@ -487,6 +487,102 @@
 }
 
 /* --------------------------------------------------------
+ * Shopping-Widget
+ * -------------------------------------------------------- */
+.shopping-widget-list {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) 0;
+}
+
+.shopping-widget-list:hover {
+  background-color: var(--color-surface-2);
+}
+
+.shopping-widget-list + .shopping-widget-list {
+  border-top: 1px solid var(--color-border-subtle);
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+}
+
+.shopping-widget-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.shopping-widget-list__name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.shopping-widget-list__count {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+}
+
+.shopping-widget-list__progress {
+  height: 4px;
+  background-color: var(--color-surface-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.shopping-widget-list__bar {
+  height: 100%;
+  background-color: var(--color-success);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.shopping-widget-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.shopping-widget-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.shopping-widget-item__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-text-disabled);
+  flex-shrink: 0;
+}
+
+.shopping-widget-item__name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shopping-widget-item__qty {
+  color: var(--color-text-tertiary);
+  font-size: var(--text-xs);
+  flex-shrink: 0;
+}
+
+.shopping-widget-item--more {
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
+/* --------------------------------------------------------
  * Notizen-Grid-Widget
  * -------------------------------------------------------- */
 .notes-grid-widget {

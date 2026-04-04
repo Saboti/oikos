@@ -75,7 +75,8 @@
     "overdue": "Scaduto",
     "dueSoon": "Scade oggi",
     "dueTomorrow": "Scade domani",
-    "allDay": "Tutto il giorno"
+    "allDay": "Tutto il giorno",
+    "shoppingMore": "+{{count}} altri"
   },
 
   "tasks": {

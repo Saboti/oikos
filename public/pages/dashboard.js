@@ -271,6 +271,53 @@ function renderPinnedNotes(notes) {
 }
 
 // --------------------------------------------------------
+// Shopping-Widget
+// --------------------------------------------------------
+
+function renderShoppingLists(lists) {
+  if (!lists.length) return '';
+
+  const totalOpen = lists.reduce((sum, l) => sum + l.open_count, 0);
+
+  const listsHtml = lists.map((list) => {
+    const progress = list.total_count > 0
+      ? Math.round(((list.total_count - list.open_count) / list.total_count) * 100)
+      : 0;
+
+    const itemsHtml = list.items.map((item) => `
+      <div class="shopping-widget-item">
+        <span class="shopping-widget-item__dot"></span>
+        <span class="shopping-widget-item__name">${esc(item.name)}</span>
+        ${item.quantity ? `<span class="shopping-widget-item__qty">${esc(item.quantity)}</span>` : ''}
+      </div>
+    `).join('');
+
+    const moreCount = list.open_count - list.items.length;
+
+    return `
+      <div class="shopping-widget-list" data-route="/shopping" role="button" tabindex="0">
+        <div class="shopping-widget-list__header">
+          <span class="shopping-widget-list__name">${esc(list.name)}</span>
+          <span class="shopping-widget-list__count">${list.total_count - list.open_count}/${list.total_count}</span>
+        </div>
+        <div class="shopping-widget-list__progress">
+          <div class="shopping-widget-list__bar" style="width:${progress}%"></div>
+        </div>
+        <div class="shopping-widget-list__items">
+          ${itemsHtml}
+          ${moreCount > 0 ? `<div class="shopping-widget-item shopping-widget-item--more">${t('dashboard.shoppingMore', { count: moreCount })}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `<div class="widget">
+    ${widgetHeader('shopping-cart', t('nav.shopping'), totalOpen, '/shopping')}
+    <div class="widget__body">${listsHtml}</div>
+  </div>`;
+}
+
+// --------------------------------------------------------
 // Wetter-Widget
 // --------------------------------------------------------
 
@@ -431,7 +478,7 @@ export async function render(container, { user }) {
     ${renderFab()}
   `;
 
-  let data    = { upcomingEvents: [], urgentTasks: [], todayMeals: [], pinnedNotes: [] };
+  let data    = { upcomingEvents: [], urgentTasks: [], todayMeals: [], pinnedNotes: [], shoppingLists: [] };
   let weather = null;
   try {
     const [dashRes, weatherRes] = await Promise.all([
@@ -464,6 +511,7 @@ export async function render(container, { user }) {
         ${renderWeatherWidget(weather)}
         ${renderUrgentTasks(data.urgentTasks ?? [])}
         ${renderUpcomingEvents(data.upcomingEvents ?? [])}
+        ${renderShoppingLists(data.shoppingLists ?? [])}
         ${renderTodayMeals(data.todayMeals ?? [])}
         ${renderPinnedNotes(data.pinnedNotes ?? [])}
       </div>
