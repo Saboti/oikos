@@ -195,7 +195,7 @@ export function openModal({ title, content, onSave, onDelete, size = 'md' } = {}
         <div class="modal-panel__header">
           <h2 class="modal-panel__title" id="shared-modal-title">${title}</h2>
           <button class="modal-panel__close" data-action="close-modal" aria-label="${t('modal.closeLabel')}">
-            <i data-lucide="x" style="width:18px;height:18px" aria-hidden="true"></i>
+            <i data-lucide="x" style="width:16px;height:16px" aria-hidden="true"></i>
           </button>
         </div>
         <div class="modal-panel__body">
@@ -463,6 +463,22 @@ export function btnSuccess(btn, originalLabel) {
     btn.classList.remove('btn--success');
     btn.textContent = label;
   }, 700);
+}
+
+/**
+ * Versetzt einen Button in den Lade-Zustand (Spinner, nicht klickbar).
+ * Gibt eine Cleanup-Funktion zurück, die den Originalzustand wiederherstellt.
+ *
+ * @param {HTMLButtonElement} btn
+ * @returns {() => void} cleanup
+ */
+export function btnLoading(btn) {
+  btn.classList.add('btn--loading');
+  btn.disabled = true;
+  return () => {
+    btn.classList.remove('btn--loading');
+    btn.disabled = false;
+  };
 }
 
 /**
