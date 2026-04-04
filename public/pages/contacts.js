@@ -263,7 +263,7 @@ function openContactModal({ mode, contact = null }) {
   const content = `
     <div class="form-group">
       <label class="form-label" for="cm-name">${t('contacts.nameLabel')}</label>
-      <input type="text" class="form-input" id="cm-name" placeholder="${t('contacts.namePlaceholder')}" value="${v('name')}">
+      <input type="text" class="form-input" id="cm-name" placeholder="${t('contacts.namePlaceholder')}" value="${v('name')}" autocomplete="name">
     </div>
     <div class="form-group">
       <label class="form-label" for="cm-category">${t('contacts.categoryLabel')}</label>
@@ -271,15 +271,15 @@ function openContactModal({ mode, contact = null }) {
     </div>
     <div class="form-group">
       <label class="form-label" for="cm-phone">${t('contacts.phoneLabel')}</label>
-      <input type="tel" class="form-input" id="cm-phone" placeholder="${t('contacts.phonePlaceholder')}" value="${v('phone')}">
+      <input type="tel" class="form-input" id="cm-phone" placeholder="${t('contacts.phonePlaceholder')}" value="${v('phone')}" autocomplete="tel">
     </div>
     <div class="form-group">
       <label class="form-label" for="cm-email">${t('contacts.emailLabel')}</label>
-      <input type="email" class="form-input" id="cm-email" placeholder="${t('contacts.emailPlaceholder')}" value="${v('email')}">
+      <input type="email" class="form-input" id="cm-email" placeholder="${t('contacts.emailPlaceholder')}" value="${v('email')}" autocomplete="email">
     </div>
     <div class="form-group">
       <label class="form-label" for="cm-address">${t('contacts.addressLabel')}</label>
-      <input type="text" class="form-input" id="cm-address" placeholder="${t('contacts.addressPlaceholder')}" value="${v('address')}">
+      <input type="text" class="form-input" id="cm-address" placeholder="${t('contacts.addressPlaceholder')}" value="${v('address')}" autocomplete="street-address">
     </div>
     <div class="form-group">
       <label class="form-label" for="cm-notes">${t('contacts.notesLabel')}</label>

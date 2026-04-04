@@ -362,7 +362,7 @@ function openBudgetModal({ mode, entry = null }) {
       <label class="form-label" for="bm-amount">${t('budget.amountLabel')}</label>
       <input type="number" class="form-input" id="bm-amount"
              placeholder="${t('budget.amountPlaceholder')}" step="0.01" min="0"
-             value="${absAmount}">
+             inputmode="decimal" value="${absAmount}">
     </div>
 
     <div class="form-group">

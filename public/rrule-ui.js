@@ -100,7 +100,7 @@ export function renderRRuleFields(prefix, existingRule) {
             <label class="label form-label" for="${prefix}-rrule-interval">Alle</label>
             <div class="rrule-interval-wrap">
               <input class="input form-input" type="number" id="${prefix}-rrule-interval"
-                     min="1" max="99" value="${parsed.interval}" style="width:64px;text-align:center">
+                     min="1" max="99" value="${parsed.interval}" inputmode="numeric" style="width:64px;text-align:center">
               <span class="rrule-interval-unit" id="${prefix}-rrule-unit">${unitLabel(parsed.freq, parsed.interval)}</span>
             </div>
           </div>
