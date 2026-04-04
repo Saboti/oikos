@@ -54,6 +54,7 @@
   --color-text-secondary: var(--neutral-600);  /* WCAG AA: ~5.0:1 auf weiß */
   --color-text-tertiary:  #737370;
   --color-text-disabled:  var(--neutral-300);
+  --color-text-on-accent: #ffffff;  /* Weißer Text auf farbigen Hintergründen (Buttons, Badges, FAB) */
 
   /* --------------------------------------------------------
    * 2. Farben - Akzent (konfigurierbar)

@@ -172,7 +172,7 @@
 
 .month-day--today .month-day__number {
   background-color: var(--color-accent);
-  color: #ffffff;
+  color: var(--color-text-on-accent);
   font-weight: var(--font-weight-bold);
 }
 
@@ -190,7 +190,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
-  color: #ffffff;
+  color: var(--color-text-on-accent);
   line-height: 1.6;
 }
 
@@ -251,7 +251,7 @@
 
 .week-view__day-num--today {
   background-color: var(--color-accent);
-  color: #ffffff;
+  color: var(--color-text-on-accent);
 }
 
 .week-view__scroll {
@@ -337,7 +337,7 @@
   padding: var(--space-0h) var(--space-1);
   font-size: var(--text-xs);
   font-weight: var(--font-weight-medium);
-  color: #ffffff;
+  color: var(--color-text-on-accent);
   overflow: hidden;
   cursor: pointer;
   z-index: 1;
@@ -507,7 +507,7 @@
   justify-content: center;
   font-size: var(--text-xs);
   font-weight: var(--font-weight-bold);
-  color: #ffffff;
+  color: var(--color-text-on-accent);
   flex-shrink: 0;
 }
 
@@ -618,7 +618,7 @@
   font-weight: var(--font-weight-medium);
   padding: var(--space-px) var(--space-1);
   border-radius: var(--radius-xs);
-  color: #ffffff;
+  color: var(--color-text-on-accent);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
