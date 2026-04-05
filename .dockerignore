@@ -5,6 +5,11 @@ node_modules
 .worktrees
 .env
 .env.*
+
+# Database files (never include real data in image)
+*.db
+*.db-shm
+*.db-wal
 .nvmrc
 .gitignore
 .dockerignore
