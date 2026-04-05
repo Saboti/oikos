@@ -11,6 +11,7 @@ const LOCALE_LABELS = {
   de: 'Deutsch',
   en: 'English',
   it: 'Italiano',
+  sv: 'Svenska',
 };
 
 class OikosLocalePicker extends HTMLElement {

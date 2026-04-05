@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.3] - 2026-04-05
+
+### Added
+- Swedish (Svenska) translation - contributed by @olsson82 (#19)
+- Italian (Italiano) is now explicitly listed as a language option in Settings
+
 ## [0.11.2] - 2026-04-05
 
 ### Added
