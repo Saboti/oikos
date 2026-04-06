@@ -230,6 +230,7 @@
   --sidebar-bg: var(--neutral-100);
   --sidebar-shadow-light: rgba(255, 255, 255, 0.6);
   --sidebar-shadow-dark: rgba(0, 0, 0, 0.08);
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 
   /* --------------------------------------------------------
