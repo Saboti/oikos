@@ -4,8 +4,12 @@
  * Abhängigkeiten: tokens.css, layout.css
  */
 
-/* ── Kein Rubber-Banding / Pull-to-Refresh des Browsers ── */
+/* ── Kein Rubber-Banding, kein Body-Scroll ──
+ * overflow: hidden verhindert, dass body scrollbar wird, falls ein
+ * Element minimal überläuft. overscroll-behavior: none deaktiviert
+ * Pull-to-Refresh und Rubber-Banding. */
 html, body {
+  overflow: hidden;
   overscroll-behavior: none;
 }
 
