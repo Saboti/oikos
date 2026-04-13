@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.2] - 2026-04-13
+
+### Added
+- Budget: CNY (Chinese Yuan) added to the list of selectable currencies in Settings (#42)
+
 ## [0.16.1] - 2026-04-13
 
 ### Fixed
