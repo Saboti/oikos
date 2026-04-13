@@ -249,22 +249,6 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 9. Sticky Header — Glass-Token-Upgrade
- *
- * Bestehender backdrop-filter (blur(12px)) in layout.css wird auf
- * --glass-* Tokens umgestellt. Hintergrund transparenter machen
- * damit der Blur-Effekt besser sichtbar ist.
- * ================================================================ */
-@supports (backdrop-filter: blur(1px)) {
-  .sticky-header {
-    background-color: color-mix(in srgb, var(--color-bg) 80%, transparent);
-    backdrop-filter: var(--blur-sm) saturate(160%);
-    -webkit-backdrop-filter: var(--blur-sm) saturate(160%);
-    border-bottom: 1px solid var(--glass-border-subtle);
-  }
-}
-
-/* ================================================================
  * 10. Toasts — Glass + Capsule
  *
  * Standard-Toast: Dark-Glass (neutrales --neutral-800 bleibt als
@@ -357,32 +341,10 @@ textarea.form-input {
 /* ================================================================
  * 14. Dashboard-Widgets — Glass Cards
  *
- * .widget bekommt eine leichte Glass-Behandlung:
- * Stärkere Border, subtiles Highlight oben.
- * Kein backdrop-filter (Widgets sind über normalem Seitenhintergrund,
- * kein dramatischer Tiefeneffekt nötig).
+ * Glass-Styles (border, shadow, ::before highlight) direkt in
+ * dashboard.css, da dieses Modul-CSS nach glass.css geladen wird
+ * und sonst den box-shadow überschreiben würde.
  * ================================================================ */
-.widget {
-  border: 1px solid var(--glass-border-subtle);
-  box-shadow: var(--glass-shadow-sm);
-}
-
-.widget::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--glass-highlight-subtle);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
-  pointer-events: none;
-}
-
-/* Relative-Positionierung für ::before */
-.widget {
-  position: relative;
-}
 
 /* ================================================================
  * 15. FAB-Backdrop (Dashboard) — Glass Blur

@@ -152,10 +152,25 @@
 .widget {
   background-color: var(--color-surface);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--glass-shadow-sm);
+  border: 1px solid var(--glass-border-subtle);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.widget::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--glass-highlight-subtle);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .widget__header {
