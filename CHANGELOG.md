@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.3] - 2026-04-13
+
+### Fixed
+- CSS: `glass.css` now works on Safari < 18 - all `@supports` checks extended to `(backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))` so older Safari (which only understands the `-webkit-` prefix) no longer skips the entire block
+- CSS: non-blur glass styles (background-color, border, box-shadow) moved outside `@supports` blocks - they are now always active on all browsers and devices, regardless of `backdrop-filter` support
+
 ## [0.17.2] - 2026-04-13
 
 ### Fixed

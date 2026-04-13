@@ -1,44 +1,46 @@
 /**
- * Modul: Liquid Glass - Shell Components (Phase 1)
- * Zweck: Glass-Effekte für Navigation, Modal, Buttons, FAB
+ * Modul: Liquid Glass - Shell Components (Phase 1–3)
+ * Zweck: Glass-Effekte für Navigation, Modal, Buttons, FAB, Animationen
  *        Rein additiv: überschreibt nur optische Eigenschaften,
  *        keine Layout-, Größen- oder Funktionsänderungen.
  * Abhängigkeiten: tokens.css (Section 16 Glass-Tokens), layout.css
  *
- * Aufbau:
- *   1. Bottom Navigation
- *   2. Sidebar (Desktop)
- *   3. Modal (Overlay + Panel)
- *   4. Buttons (Capsule + Specular)
- *   5. FAB
- *   6. Karten (hover-only)
- *   7. Reduced-motion / Reduced-transparency Overrides
+ * Architektur:
+ *   Nicht-Blur-Stile (background, border, shadow) sind AUSSERHALB von
+ *   @supports gesetzt → wirken auf allen Geräten und Browsern.
+ *   Blur-Filter (backdrop-filter) sind INNERHALB von @supports mit
+ *   webkit-Fallback → greifen wenn vom Browser unterstützt.
+ *   @supports-Check: (backdrop-filter) OR (-webkit-backdrop-filter)
+ *   deckt Safari < 18 (nur webkit-Prefix) und moderne Browser ab.
  */
 
 /* ================================================================
  * 1. Bottom Navigation — Glass Bar
- *
- * Upgrade von color-mix-Fallback auf --glass-* Tokens.
- * Bereits vorhandenes backdrop-filter wird auf Tokens umgestellt.
  * ================================================================ */
-@supports (backdrop-filter: blur(1px)) {
+
+/* Immer aktiv: Glass-Hintergrund, Border, Shadow */
+.nav-bottom {
+  background-color: var(--glass-bg);
+  border-top: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-sm);
+}
+
+/* Blur nur wenn unterstützt (webkit-Fallback für Safari < 18) */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .nav-bottom {
-    background-color: var(--glass-bg);
     backdrop-filter: var(--blur-md) saturate(180%);
     -webkit-backdrop-filter: var(--blur-md) saturate(180%);
-    border-top: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow-sm);
   }
 }
 
-/* Active-State: Konzentrische Glass-Kapsel hinter aktivem Nav-Item */
+/* Active-State: Glass-Kapsel hinter aktivem Nav-Item */
 .nav-item[aria-current="page"] {
   background: color-mix(in srgb, var(--active-module-accent, var(--color-accent)) 14%, transparent);
   border-radius: var(--radius-glass-chip);
   box-shadow: inset 0 1px 0 var(--glass-highlight-subtle);
 }
 
-/* Hover-State auf Desktop (falls Maus vorhanden) */
+/* Hover-State auf Desktop */
 @media (hover: hover) {
   .nav-item:hover:not([aria-current="page"]) {
     background: color-mix(in srgb, var(--color-text-tertiary) 8%, transparent);
@@ -48,42 +50,46 @@
 
 /* ================================================================
  * 2. Sidebar (Desktop ≥ 1024px) — Glass Panel
- *
- * backdrop-filter saturate() gibt dem Sidebar-Hintergrund einen
- * leichten Farbboost vom Content. blur() wirkt auf überlappenden
- * Content beim Scrollen in engen Layouts.
  * ================================================================ */
 @media (min-width: 1024px) {
-  @supports (backdrop-filter: blur(1px)) {
+  .nav-sidebar {
+    background: var(--glass-bg-elevated);
+    border-right: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow-md);
+  }
+
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     .nav-sidebar {
-      background: var(--glass-bg-elevated);
       backdrop-filter: var(--blur-sm) saturate(160%);
       -webkit-backdrop-filter: var(--blur-sm) saturate(160%);
-      border-right: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow-md);
     }
   }
 
-  /* Active-State in Sidebar: Glass Pill mit Akzentlinie */
+  /* Active-State in Sidebar */
   .nav-sidebar .nav-item[aria-current="page"] {
     background: color-mix(in srgb, var(--active-module-accent, var(--color-accent)) 12%, transparent);
     border-radius: var(--radius-sm);
     box-shadow: inset 0 1px 0 var(--glass-highlight-subtle);
   }
-
 }
 
 /* ================================================================
  * 3. Modal — Glass Overlay + Glass Panel
- *
- * Overlay: leichter Page-Blur ("Tiefenschärfe"-Effekt) +
- *          reduziertes Dimming (Glass braucht weniger Overlay-Dunkel).
- * Panel:   Glass-Hintergrund mit --glass-bg-elevated + leichtem blur.
- * Header:  Sticky-Header im Panel bekommt identisches Glass-BG.
  * ================================================================ */
-@supports (backdrop-filter: blur(1px)) {
+
+/* Immer aktiv: stärkerer Schatten und Glass-Border */
+.modal-panel {
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-lg);
+}
+
+.modal-panel__header {
+  border-bottom-color: var(--glass-border);
+}
+
+/* Blur nur wenn unterstützt */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .modal-overlay {
-    /* Weniger Dimming, dafür Page-Blur für Tiefeneffekt */
     background-color: rgba(0, 0, 0, 0.30);
     backdrop-filter: var(--blur-xs) saturate(120%);
     -webkit-backdrop-filter: var(--blur-xs) saturate(120%);
@@ -93,21 +99,16 @@
     background: var(--glass-bg-elevated);
     backdrop-filter: var(--blur-sm);
     -webkit-backdrop-filter: var(--blur-sm);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow-lg);
   }
 
-  /* Sticky-Header: identisches Glass-BG damit beim Scrollen
-     der Blur-Layer nicht durch den Inhalt bricht */
   .modal-panel__header {
     background: var(--glass-bg-elevated);
-    border-bottom-color: var(--glass-border);
   }
 }
 
-/* Bottom-Sheet Handle: etwas prominenter auf Glass */
+/* Bottom-Sheet Handle */
 @media (max-width: 767px) {
-  @supports (backdrop-filter: blur(1px)) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     .modal-panel::before {
       background: var(--glass-border);
     }
@@ -116,10 +117,6 @@
 
 /* ================================================================
  * 4. Buttons — Capsule Shape + Specular Highlight
- *
- * Primär-Button: Kapsel-Radius (--radius-glass-button = full)
- *               + subtiles Specular-Highlight (inset box-shadow oben)
- * Sekundär-Button: leichte Glass-Border-Verfeinerung
  * ================================================================ */
 .btn--primary {
   border-radius: var(--radius-glass-button);
@@ -138,8 +135,8 @@
   border-radius: var(--radius-glass-button);
 }
 
-/* Ghost-Buttons bekommen beim Hover ein leichtes Glass-Pill */
-@supports (backdrop-filter: blur(1px)) {
+/* Ghost-Buttons */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .btn--ghost:hover {
     background: color-mix(in srgb, var(--color-text-tertiary) 10%, transparent);
     backdrop-filter: var(--blur-xs);
@@ -148,10 +145,7 @@
 }
 
 /* ================================================================
- * 5. FAB (Floating Action Button) — Specular Highlight
- *
- * Inset box-shadow erzeugt Specular-Highlight-Illusion (Lichtquelle
- * von oben) ohne Canvas-Manipulation oder SVG-Filter.
+ * 5. FAB — Specular Highlight
  * ================================================================ */
 .fab {
   box-shadow:
@@ -169,33 +163,24 @@
 
 /* ================================================================
  * 6. Cards — Glass auf hover (nur interaktive Cards)
- *
- * .card--interactive bekommt beim Hover einen Glass-Lift:
- * leichter Blur + Glass-Border + erhöhter Schatten.
- * Nicht auf Touch-Geräten (hover: hover).
  * ================================================================ */
 @media (hover: hover) {
-  @supports (backdrop-filter: blur(1px)) {
+  .card--interactive:hover {
+    border: 1px solid var(--glass-border-subtle);
+    box-shadow: var(--glass-shadow-md);
+  }
+
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     .card--interactive:hover {
       background: var(--glass-bg-hover);
       backdrop-filter: var(--blur-xs);
       -webkit-backdrop-filter: var(--blur-xs);
-      border: 1px solid var(--glass-border-subtle);
-      box-shadow: var(--glass-shadow-md);
     }
   }
 }
 
 /* ================================================================
- * 7. Accessibility Overrides
- *
- * prefers-reduced-transparency: Tokens aus tokens.css schalten
- *   backdrop-filter bereits ab. Hier zusätzliche Sicherheit für
- *   Elemente, die ohne @supports-Guard arbeiten (Specular-Highlights).
- *
- * prefers-reduced-motion: Alle Glass-Transitionen deaktivieren.
- *   (Animationen in layout.css mit animation: none bereits gedeckt,
- *    hier nur Glass-spezifische Transitions.)
+ * 7. Accessibility Overrides — Phase 1
  * ================================================================ */
 @media (prefers-reduced-transparency: reduce) {
   .nav-item[aria-current="page"],
@@ -227,10 +212,6 @@
 
 /* ================================================================
  * 8. Form-Inputs — Glass Border + verbesserter Focus-Ring
- *
- * Kein backdrop-filter auf Inputs (würde Inhalte hinter dem Input
- * in Modals unattraktiv unscharf rendern). Stattdessen: subtile
- * Glass-Border + abgestufter Focus-Glow via CSS-Shadow.
  * ================================================================ */
 .input,
 .form-input,
@@ -249,18 +230,14 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 10. Toasts — Glass + Capsule
- *
- * Standard-Toast: Dark-Glass (neutrales --neutral-800 bleibt als
- * Fallback). Farbige Toasts (success/danger/warning) bekommen nur
- * den Capsule-Radius.
+ * 9. Toasts — Glass + Capsule
  * ================================================================ */
 .toast {
   border-radius: var(--radius-glass-card);
   box-shadow: var(--glass-shadow-md);
 }
 
-@supports (backdrop-filter: blur(1px)) {
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .toast:not(.toast--success):not(.toast--danger):not(.toast--warning) {
     background-color: color-mix(in srgb, var(--neutral-800) 90%, transparent);
     backdrop-filter: var(--blur-sm);
@@ -269,7 +246,6 @@ textarea.form-input {
   }
 }
 
-/* Farbige Toasts: nur Capsule + specular, kein Blur */
 .toast--success,
 .toast--danger,
 .toast--warning {
@@ -280,10 +256,8 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 11. Filter-Chips — Glass Active State
- *
- * Inaktiver Chip: glass border (subtil).
- * Aktiver Chip: voller Glass-Pip mit backdrop-filter + Accent-Tint.
+ * 10. Filter-Chips — Glass Border (immer aktiv)
+ * Aktiver Glass-State: direkt in tasks.css (Load-Order-Konflikt)
  * ================================================================ */
 .filter-chip {
   border-color: var(--glass-border-subtle);
@@ -294,38 +268,16 @@ textarea.form-input {
   background-color: color-mix(in srgb, var(--color-text-tertiary) 8%, transparent);
 }
 
-@supports (backdrop-filter: blur(1px)) {
-  .filter-chip--active {
-    background: color-mix(in srgb, var(--color-accent) 18%, transparent);
-    backdrop-filter: var(--blur-xs);
-    -webkit-backdrop-filter: var(--blur-xs);
-    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20);
-  }
-}
-
 /* ================================================================
- * 12. Priority Badges — Capsule Radius + Glass Border
- *
- * Upgradet --radius-xs auf --radius-glass-chip (capsule) für einen
- * moderneren Look. Behält semantic colors bei.
+ * 11. Priority Badges — Capsule + Glass Border
+ * Immer aktiv (kein backdrop-filter nötig)
  * ================================================================ */
-.priority-badge {
-  border-radius: var(--radius-glass-chip);
-  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-}
-
-/* Nav-Badge (Overdue-Indikator) */
 .nav-badge {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20);
 }
 
 /* ================================================================
- * 13. Toggle-Switch — Specular Thumb
- *
- * Der weiße Thumb bekommt einen subtilen inset-Schatten der eine
- * Specular-Highlight-Illusion erzeugt (Lichtquelle von oben-rechts).
- * Die Animation verwendet bereits --ease-glass cubic-bezier.
+ * 12. Toggle-Switch — Specular Thumb
  * ================================================================ */
 .toggle__track::after {
   box-shadow:
@@ -339,20 +291,9 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 14. Dashboard-Widgets — Glass Cards
- *
- * Glass-Styles (border, shadow, ::before highlight) direkt in
- * dashboard.css, da dieses Modul-CSS nach glass.css geladen wird
- * und sonst den box-shadow überschreiben würde.
+ * 13. FAB-Backdrop (Dashboard) — Glass Blur
  * ================================================================ */
-
-/* ================================================================
- * 15. FAB-Backdrop (Dashboard) — Glass Blur
- *
- * Der Overlay-Hintergrund beim Dashboard-FAB-Menü bekommt einen
- * dezenten Blur-Effekt für mehr Tiefe.
- * ================================================================ */
-@supports (backdrop-filter: blur(1px)) {
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .fab-backdrop--visible {
     backdrop-filter: var(--blur-xs);
     -webkit-backdrop-filter: var(--blur-xs);
@@ -361,13 +302,12 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 16. Search-Inputs (Modul-Toolbars)
- *
- * Modul-CSS wird on-demand nach glass.css geladen. Glass-Styles für
- * modul-spezifische Search-Inputs stehen daher in den jeweiligen
- * Modul-CSS-Dateien (contacts.css, notes.css, shopping.css).
- * Hier werden nur token-basierte Fallback-Regeln für generische Inputs
- * innerhalb von Modals definiert (via .modal-panel .form-input).
+ * 14. Dashboard-Widgets — Glass Cards
+ * Glass-Styles direkt in dashboard.css (Load-Order-Konflikt)
+ * ================================================================ */
+
+/* ================================================================
+ * 15. Modal-Inputs
  * ================================================================ */
 .modal-panel .form-input,
 .modal-panel .input {
@@ -375,19 +315,13 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 17. Accessibility — Phase 2 Overrides
+ * 16. Accessibility — Phase 2
  * ================================================================ */
 @media (prefers-reduced-transparency: reduce) {
   .filter-chip--active,
   .toast:not(.toast--success):not(.toast--danger):not(.toast--warning) {
     background-color: var(--color-accent-light);
     border-color: var(--color-accent);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  .sticky-header {
-    background-color: var(--color-bg);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -408,11 +342,7 @@ textarea.form-input {
  * ================================================================ */
 
 /* ================================================================
- * 18. Bottom-Nav Auto-Hide on Scroll
- *
- * .nav-bottom--hidden: Nav gleitet nach unten aus dem Viewport.
- * Per JS über scroll-Listener auf .app-content gesetzt.
- * FAB bleibt sichtbar (Daumen-Erreichbarkeit wichtiger als Konsistenz).
+ * 17. Bottom-Nav Auto-Hide on Scroll
  * ================================================================ */
 .nav-bottom {
   transition:
@@ -428,11 +358,7 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 19. Modal-Entrance — Glass Spring
- *
- * Overlay: Blur-Ramp statt harten Fade (backdrop-filter via opacity).
- * Panel Desktop: Spring-Overshooting statt linearem scale-in.
- * Panel Mobile: Spring-Slide-up mit leichtem Bounce.
+ * 18. Modal-Entrance — Glass Spring
  * ================================================================ */
 @keyframes glass-modal-scale-in {
   from {
@@ -469,10 +395,7 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 20. Seitentransitionen — Spring Easing
- *
- * Ersetzt die festen 0.2s ease durch --transition-base + --ease-glass
- * für eine weichere, physikalisch plausible Bewegung.
+ * 19. Seitentransitionen — Spring Easing
  * ================================================================ */
 .page-transition--in-right,
 .page-transition--in-left {
@@ -487,10 +410,7 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 21. List-Stagger — Spring Timing + erhöhter Offset
- *
- * Leicht längere Laufzeit + spring-Easing für einen
- * physikalischeren Erscheinungseffekt.
+ * 20. List-Stagger — Spring Timing
  * ================================================================ */
 .list-stagger > * {
   animation-duration: 0.28s;
@@ -498,11 +418,7 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 22. Focus-Ring — Scale-In Animation
- *
- * Fokus-Indikator erscheint mit sanftem Scale-Pop statt hart.
- * Kein outline-transition (outline ist nicht transition-fähig),
- * daher box-shadow als Alternative für focus-visible.
+ * 21. Focus-Ring — Scale-In Animation
  * ================================================================ */
 :focus-visible {
   transition:
@@ -512,10 +428,7 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 23. Skeleton Shimmer — Glass Shimmer
- *
- * Helleres, richtungstreues Shimmer mit glass-artiger Lichtquelle.
- * Behält bestehende Animation, verbessert nur den Farbverlauf.
+ * 22. Skeleton Shimmer — Glass Shimmer
  * ================================================================ */
 .skeleton {
   background: linear-gradient(
@@ -530,10 +443,7 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 24. FAB — Attention Pulse (subtil, einmalig beim Erscheinen)
- *
- * Leichter Ring-Expand nach dem fab-in, signalisiert Interaktivität.
- * Nur einmal, kein dauerhaftes Blinken (kein infinite loop).
+ * 23. FAB — Attention Pulse
  * ================================================================ */
 @keyframes fab-ring-pulse {
   0%   { box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.28), 0 0 0 0 color-mix(in srgb, var(--module-accent, var(--color-btn-primary)) 50%, transparent); }
@@ -548,7 +458,7 @@ textarea.form-input {
 }
 
 /* ================================================================
- * 25. Accessibility — Phase 3 Overrides
+ * 24. Accessibility — Phase 3
  * ================================================================ */
 @media (prefers-reduced-motion: reduce) {
   .nav-bottom {
@@ -556,7 +466,6 @@ textarea.form-input {
   }
 
   .nav-bottom--hidden {
-    /* Sofort verstecken ohne Animation */
     transition: none;
   }
 
