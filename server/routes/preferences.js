@@ -18,7 +18,7 @@ const DEFAULT_MEAL_TYPES = VALID_MEAL_TYPES.join(',');
 const VALID_CURRENCIES = ['EUR', 'USD', 'GBP', 'SEK', 'NOK', 'DKK', 'CHF', 'CNY', 'PLN', 'CZK', 'HUF', 'JPY', 'AUD', 'CAD', 'TRY', 'RUB'];
 const DEFAULT_CURRENCY = 'EUR';
 
-const VALID_WIDGET_IDS = ['tasks', 'calendar', 'shopping', 'meals', 'notes', 'weather'];
+const VALID_WIDGET_IDS = ['weather', 'tasks', 'calendar', 'shopping', 'meals', 'notes'];
 const DEFAULT_WIDGET_CONFIG = JSON.stringify(VALID_WIDGET_IDS.map((id) => ({ id, visible: true })));
 
 // --------------------------------------------------------

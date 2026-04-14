@@ -16,7 +16,7 @@ let _fabController = null;
 // Widget-Definitionen (Reihenfolge = Standard-Layout)
 // --------------------------------------------------------
 
-const WIDGET_IDS = ['tasks', 'calendar', 'shopping', 'meals', 'notes', 'weather'];
+const WIDGET_IDS = ['weather', 'tasks', 'calendar', 'shopping', 'meals', 'notes'];
 
 const DEFAULT_WIDGET_CONFIG = WIDGET_IDS.map((id) => ({ id, visible: true }));
 
