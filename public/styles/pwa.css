@@ -79,8 +79,8 @@ nav,
 
   /* iOS PWA: Schwarzen Streifen unter der Nav verhindern.
    * iOS reserviert den Home-Indicator-Bereich unterhalb des CSS-Viewports.
-   * Ein ::after-Element mit fester Position füllt diesen Bereich mit der
-   * Surface-Farbe, sodass kein schwarzer Spalt sichtbar ist. */
+   * Das ::after-Element bekommt denselben Blur+Hintergrund wie .nav-bottom,
+   * damit kein Farbunterschied zwischen Nav-Bar und Safe-Area-Bereich entsteht. */
   body::after {
     content: '';
     position: fixed;
@@ -88,7 +88,9 @@ nav,
     left: 0;
     right: 0;
     height: env(safe-area-inset-bottom, 0px);
-    background-color: var(--color-surface);
+    background-color: color-mix(in srgb, var(--color-surface) 85%, transparent);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
     z-index: var(--z-nav);
   }
 }
