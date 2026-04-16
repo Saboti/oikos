@@ -239,6 +239,10 @@ async function renderPage(route, previousPath = null) {
     const outClass  = direction === 'right' ? 'page-transition--out-left' : 'page-transition--out-right';
     const inClass   = direction === 'right' ? 'page-transition--in-right' : 'page-transition--in-left';
 
+    // Performance: backdrop-filter während Übergang deaktivieren (Android-Optimierung).
+    // glass.css setzt alle backdrop-filter im app-content auf none solange diese Klasse aktiv ist.
+    document.documentElement.classList.add('navigating');
+
     // Alte Seite kurz ausfaden, falls vorhanden
     const oldPage = content.querySelector('.page-transition');
     if (oldPage) {
@@ -259,7 +263,18 @@ async function renderPage(route, previousPath = null) {
     pageWrapper.style.opacity = '';
     pageWrapper.classList.add(inClass);
 
+    // navigating-Klasse nach Ende der Einblend-Animation entfernen.
+    // Fallback-Timeout falls animationend nicht feuert (z.B. prefers-reduced-motion).
+    const navEndTimeout = setTimeout(() => {
+      document.documentElement.classList.remove('navigating');
+    }, 300);
+    pageWrapper.addEventListener('animationend', () => {
+      clearTimeout(navEndTimeout);
+      document.documentElement.classList.remove('navigating');
+    }, { once: true });
+
   } catch (err) {
+    document.documentElement.classList.remove('navigating');
     console.error('[Router] Seiten-Render-Fehler:', err);
     renderError(app, err);
   }

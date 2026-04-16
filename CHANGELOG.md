@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.6] - 2026-04-16
+
+### Fixed
+- Android PWA: page transitions were taking ~1 second, making navigation feel sluggish. Two root causes addressed: (1) `glass.css` extended the page-in animation duration from `0.20s` to `0.30s` with a spring easing (`ease-glass`) — reverted to `0.20s` in and `0.12s` out to match the layout baseline. (2) During transitions, dozens of `backdrop-filter` composited layers (widgets, task cards, inputs, toolbars) were all rendered simultaneously for both the outgoing and incoming page, overwhelming mid-range Android GPUs. Added `html.navigating` state: `router.js` sets this class for the duration of each page transition, and `glass.css` overrides all `backdrop-filter` in the content area to `none` for that window, then restores them once the animation ends (closes #48).
+
 ## [0.20.5] - 2026-04-16
 
 ### Fixed

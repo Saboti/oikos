@@ -400,14 +400,25 @@ textarea.form-input {
  * ================================================================ */
 .page-transition--in-right,
 .page-transition--in-left {
-  animation-duration: 0.30s;
+  animation-duration: 0.20s;
   animation-timing-function: var(--ease-glass);
 }
 
 .page-transition--out-left,
 .page-transition--out-right {
-  animation-duration: 0.14s;
+  animation-duration: 0.12s;
   animation-timing-function: var(--ease-out);
+}
+
+/* Performance: backdrop-filter deaktivieren während Seitenübergängen.
+ * Auf Android verursachen viele gleichzeitige backdrop-filter-Layer
+ * (Widgets, Cards, Inputs) hohen GPU-Aufwand → Transition wirkt träge.
+ * html.navigating wird von router.js für die Dauer des Übergangs gesetzt. */
+html.navigating .app-content *,
+html.navigating .app-content *::before,
+html.navigating .app-content *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* ================================================================
