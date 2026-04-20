@@ -195,6 +195,7 @@
   --color-overlay:        var(--_color-overlay);
   --_color-overlay-light: rgba(0, 0, 0, 0.2);
   --color-overlay-light:  var(--_color-overlay-light);
+  --color-backdrop-fab:   rgba(0, 0, 0, 0.25);
 
   /* Glass-Overlays (fuer Elemente auf farbigen Hintergruenden) */
   --color-glass:       rgba(255, 255, 255, 0.18);
@@ -207,6 +208,7 @@
    *    3 Stufen: subtle (Karten), medium (Dropdowns, Hover),
    *    elevated (Modals, FAB).
    * -------------------------------------------------------- */
+  --shadow-drop-icon: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
   --_shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.03);
   --shadow-sm:  var(--_shadow-sm);
   --_shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);

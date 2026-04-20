@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.19] - 2026-04-20
+
+### Changed
+- Design: two hardcoded color values in `dashboard.css` replaced with design tokens — `drop-shadow(0 2px 4px rgba(0,0,0,0.15))` on `.weather-widget__icon` replaced with new `--shadow-drop-icon` token; `rgba(0,0,0,0.25)` on `.fab-backdrop` replaced with new `--color-backdrop-fab` token
+- Design: `--shadow-drop-icon` and `--color-backdrop-fab` added to `tokens.css` (shadow and overlay sections respectively)
+
 ## [0.20.18] - 2026-04-20
 
 ### Changed
