@@ -11,8 +11,8 @@ SECRETS_FILE="/data/secrets.env"
 if [ ! -f "$SECRETS_FILE" ]; then
     echo "[oikos] First run: generating SESSION_SECRET and DB_ENCRYPTION_KEY …"
     printf 'SESSION_SECRET=%s\nDB_ENCRYPTION_KEY=%s\n' \
-        "$(openssl rand -hex 32)" \
-        "$(openssl rand -hex 32)" \
+        "$(node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))")" \
+        "$(node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))")" \
         > "$SECRETS_FILE"
     chown node:node "$SECRETS_FILE"
     chmod 600 "$SECRETS_FILE"
