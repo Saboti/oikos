@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.33] - 2026-04-20
+
+### Fixed
+- Min/Max Temperature Aggregation for Forecast in Weather Widget
+
 ## [0.20.32] - 2026-04-20
 
 ### Changed
