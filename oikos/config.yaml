@@ -27,19 +27,8 @@ ingress_port: 3000
 # ── Options ─────────────────────────────────────────────────────────────────
 options:
   log_level: info
-  # OpenWeatherMap (dashboard weather widget)
-  weather_api_key: null
-  weather_city: null
   weather_units: metric
   weather_lang: en
-  # Google Calendar (two-way sync)
-  google_client_id: null
-  google_client_secret: null
-  google_redirect_uri: null
-  # Apple iCloud CalDAV (two-way sync)
-  apple_caldav_url: null
-  apple_username: null
-  apple_app_password: null
 
 schema:
   log_level: list(debug|info|warn|error)
