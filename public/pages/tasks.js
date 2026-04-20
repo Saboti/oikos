@@ -123,7 +123,7 @@ function renderDueDate(dateStr) {
   const d = formatDueDate(dateStr);
   if (!d) return '';
   return `<span class="due-date ${d.cls}">
-    <i data-lucide="clock" style="width:11px;height:11px" aria-hidden="true"></i> ${d.label}
+    <i data-lucide="clock" class="icon-11" aria-hidden="true"></i> ${d.label}
   </span>`;
 }
 
@@ -132,11 +132,11 @@ function renderSwipeRow(task, innerHtml) {
   return `
     <div class="swipe-row" data-swipe-id="${task.id}" data-swipe-status="${task.status}">
       <div class="swipe-reveal swipe-reveal--done" aria-hidden="true">
-        <i data-lucide="${isDone ? 'rotate-ccw' : 'check'}" style="width:22px;height:22px" aria-hidden="true"></i>
+        <i data-lucide="${isDone ? 'rotate-ccw' : 'check'}" class="icon-xl" aria-hidden="true"></i>
         <span>${isDone ? t('tasks.swipeOpen') : t('tasks.swipeDone')}</span>
       </div>
       <div class="swipe-reveal swipe-reveal--edit" aria-hidden="true">
-        <i data-lucide="pencil" style="width:22px;height:22px" aria-hidden="true"></i>
+        <i data-lucide="pencil" class="icon-xl" aria-hidden="true"></i>
         <span>${t('tasks.swipeEdit')}</span>
       </div>
       ${innerHtml}
@@ -179,7 +179,7 @@ function renderTaskCard(task, opts = {}) {
           <div class="task-card__meta">
             ${renderPriorityBadge(task.priority)}
             ${renderDueDate(task.due_date)}
-            ${task.is_recurring ? `<span class="due-date" aria-label="${t('tasks.recurring')}"><i data-lucide="repeat" style="width:12px;height:12px" aria-hidden="true"></i></span>` : ''}
+            ${task.is_recurring ? `<span class="due-date" aria-label="${t('tasks.recurring')}"><i data-lucide="repeat" class="icon-sm" aria-hidden="true"></i></span>` : ''}
             ${task.category !== 'Sonstiges' ? `<span class="due-date">${CATEGORY_LABELS()[task.category] ?? task.category}</span>` : ''}
           </div>
         </div>
@@ -190,9 +190,9 @@ function renderTaskCard(task, opts = {}) {
             ${esc(initials(task.assigned_name ?? ''))}
           </div>` : ''}
 
-        <button class="btn btn--ghost btn--icon" data-action="edit-task" data-id="${task.id}"
-                aria-label="${t('tasks.editButton')}" style="min-height:unset;width:36px;height:36px">
-          <i data-lucide="pencil" style="width:16px;height:16px" aria-hidden="true"></i>
+        <button class="btn btn--ghost btn--icon btn--icon-sm" data-action="edit-task" data-id="${task.id}"
+                aria-label="${t('tasks.editButton')}">
+          <i data-lucide="pencil" class="icon-base" aria-hidden="true"></i>
         </button>
       </div>
 
@@ -284,19 +284,19 @@ function renderModalContent({ task = null, users = [], reminder = null } = {}) {
         <label class="label" for="task-description">${t('tasks.descriptionLabel')}</label>
         <textarea class="input" id="task-description" name="description"
                   rows="2" placeholder="${t('tasks.descriptionPlaceholder')}"
-                  style="resize:vertical">${esc(task?.description)}</textarea>
+                 >${esc(task?.description)}</textarea>
       </div>
 
       <div class="modal-grid modal-grid--2">
         <div class="form-group">
           <label class="label" for="task-priority">${t('tasks.priorityLabel')}</label>
-          <select class="input" id="task-priority" name="priority" style="min-height:44px">
+          <select class="input" id="task-priority" name="priority">
             ${priorityOptions}
           </select>
         </div>
         <div class="form-group">
           <label class="label" for="task-category">${t('tasks.categoryLabel')}</label>
-          <select class="input" id="task-category" name="category" style="min-height:44px">
+          <select class="input" id="task-category" name="category">
             ${categoryOptions}
           </select>
         </div>
@@ -317,7 +317,7 @@ function renderModalContent({ task = null, users = [], reminder = null } = {}) {
 
       <div class="form-group" style="margin-top:var(--space-4)">
         <label class="label" for="task-assigned">${t('tasks.assignedLabel')}</label>
-        <select class="input" id="task-assigned" name="assigned_to" style="min-height:44px">
+        <select class="input" id="task-assigned" name="assigned_to">
           <option value="">${t('tasks.assignedNobody')}</option>
           ${userOptions}
         </select>
@@ -326,7 +326,7 @@ function renderModalContent({ task = null, users = [], reminder = null } = {}) {
       ${isEdit ? `
         <div class="form-group">
           <label class="label" for="task-status">${t('tasks.statusLabel')}</label>
-          <select class="input" id="task-status" name="status" style="min-height:44px">
+          <select class="input" id="task-status" name="status">
             ${STATUSES().map((s) =>
               `<option value="${s.value}" ${task.status === s.value ? 'selected' : ''}>${s.label}</option>`
             ).join('')}
@@ -597,7 +597,7 @@ function renderKanbanCard(task) {
       <div class="kanban-card__title">${esc(task.title)}</div>
       <div class="kanban-card__meta">
         ${renderPriorityBadge(task.priority)}
-        ${due ? `<span class="due-date ${due.cls}"><i data-lucide="clock" style="width:10px;height:10px" aria-hidden="true"></i> ${due.label}</span>` : ''}
+        ${due ? `<span class="due-date ${due.cls}"><i data-lucide="clock" class="icon-xs" aria-hidden="true"></i> ${due.label}</span>` : ''}
       </div>
       <div class="kanban-card__footer">
         ${task.assigned_color ? `
@@ -1034,10 +1034,16 @@ function wireViewToggle(container) {
       toggle.querySelectorAll('[data-view]').forEach((b) =>
         b.classList.toggle('group-toggle__btn--active', b.dataset.view === state.viewMode)
       );
-      // Gruppierungs-Toggle nur in Listenansicht sinnvoll
       const groupToggle = container.querySelector('#group-mode-toggle');
       if (groupToggle) groupToggle.style.display = state.viewMode === 'list' ? '' : 'none';
-      renderTaskList(container);
+      // Skeleton-Flash: einen Frame Render-Feedback geben, dann Ansicht aufbauen
+      const listEl = container.querySelector('#task-list');
+      if (listEl) listEl.style.opacity = '0.4';
+      requestAnimationFrame(() => {
+        renderTaskList(container);
+        const el = container.querySelector('#task-list');
+        if (el) { el.style.transition = 'opacity 0.15s'; el.style.opacity = ''; }
+      });
     });
   });
 }
@@ -1143,11 +1149,11 @@ export async function render(container, { user }) {
           <div class="group-toggle" id="view-toggle">
             <button class="group-toggle__btn ${isKanban ? '' : 'group-toggle__btn--active'}" data-view="list"
                     title="${t('tasks.listView')}" aria-label="${t('tasks.listView')}">
-              <i data-lucide="list" style="width:14px;height:14px;pointer-events:none" aria-hidden="true"></i>
+              <i data-lucide="list" class="icon-md" aria-hidden="true"></i>
             </button>
             <button class="group-toggle__btn ${isKanban ? 'group-toggle__btn--active' : ''}" data-view="kanban"
                     title="${t('tasks.kanbanView')}" aria-label="${t('tasks.kanbanView')}">
-              <i data-lucide="columns" style="width:14px;height:14px;pointer-events:none" aria-hidden="true"></i>
+              <i data-lucide="columns" class="icon-md" aria-hidden="true"></i>
             </button>
           </div>
           <div class="group-toggle" id="group-mode-toggle" ${isKanban ? 'style="display:none"' : ''}>
@@ -1155,7 +1161,7 @@ export async function render(container, { user }) {
             <button class="group-toggle__btn" data-mode="due">${t('tasks.dueDateLabel')}</button>
           </div>
           <button class="btn btn--primary" id="btn-new-task" style="gap:var(--space-1)">
-            <i data-lucide="plus" style="width:18px;height:18px" aria-hidden="true"></i> ${t('tasks.newTask')}
+            <i data-lucide="plus" class="icon-lg" aria-hidden="true"></i> ${t('tasks.newTask')}
           </button>
         </div>
       </div>
@@ -1171,7 +1177,7 @@ export async function render(container, { user }) {
           </div>`).join('')}
       </div>
       <button class="page-fab" id="fab-new-task" aria-label="${t('tasks.newTask')}">
-        <i data-lucide="plus" style="width:24px;height:24px" aria-hidden="true"></i>
+        <i data-lucide="plus" class="icon-2xl" aria-hidden="true"></i>
       </button>
     </div>
   `;

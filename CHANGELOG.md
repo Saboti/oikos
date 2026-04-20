@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.21] - 2026-04-20
+
+### Changed
+- Dashboard: eliminated double-render flicker — initial paint uses skeleton widgets and a stat-less greeting; real widgets replace skeletons in-place without resetting `container.innerHTML`
+- Dashboard: weather widget now derives temperature unit symbol (°C / °F / K) from the `units` field returned by the weather API instead of always showing °C
+- Dark mode: removed duplicate `@media (prefers-color-scheme: dark)` block from `tokens.css`; system-preference detection moved to a `matchMedia` listener in `index.html` for flash-free sync
+- Tasks: view-toggle (list / Kanban) fades out at 40% opacity during re-render and fades back in, giving visible feedback of the switch
+
+### Fixed
+- Tasks: inline `style="width/height"` on all Lucide icon instances replaced with utility CSS classes (`icon-xs` … `icon-2xl`, `icon-11`) defined in `layout.css`
+- Tasks: edit-button inline size overrides removed; replaced with new `.btn--icon-sm` utility class
+- Tasks: `textarea` `resize: vertical` and select `min-height: 44px` moved from inline styles to `layout.css`
+- Dashboard: `chipIcon` inline style variable eliminated; chip icons now use `class="icon-sm"`
+- Dashboard: settings, refresh, chevron, and other action icons converted from inline styles to CSS classes
+- Weather API: server now forwards the configured `units` value in the response payload so the frontend can render the correct unit symbol
+
 ## [0.20.20] - 2026-04-20
 
 ### Fixed

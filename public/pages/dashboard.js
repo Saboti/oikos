@@ -149,21 +149,20 @@ function skeletonWidget(lines = 3) {
 function renderGreeting(user, stats = {}) {
   const { urgentCount = 0, todayEventCount = 0, todayMealTitle = null } = stats;
 
-  const chipIcon = 'width:12px;height:12px;flex-shrink:0;';
   const statChips = [];
   if (urgentCount > 0)
     statChips.push(`<span class="greeting-chip greeting-chip--warn">
-      <i data-lucide="alert-circle" style="${chipIcon}" aria-hidden="true"></i>
+      <i data-lucide="alert-circle" class="icon-sm" style="flex-shrink:0" aria-hidden="true"></i>
       ${urgentCount > 1 ? t('dashboard.urgentTasksChipPlural', { count: urgentCount }) : t('dashboard.urgentTasksChip', { count: urgentCount })}
     </span>`);
   if (todayEventCount > 0)
     statChips.push(`<span class="greeting-chip">
-      <i data-lucide="calendar" style="${chipIcon}" aria-hidden="true"></i>
+      <i data-lucide="calendar" class="icon-sm" style="flex-shrink:0" aria-hidden="true"></i>
       ${todayEventCount > 1 ? t('dashboard.eventsChipPlural', { count: todayEventCount }) : t('dashboard.eventsChip', { count: todayEventCount })}
     </span>`);
   if (todayMealTitle)
     statChips.push(`<span class="greeting-chip">
-      <i data-lucide="utensils" style="${chipIcon}" aria-hidden="true"></i>
+      <i data-lucide="utensils" class="icon-sm" style="flex-shrink:0" aria-hidden="true"></i>
       ${t('dashboard.todayMealChip', { title: esc(todayMealTitle) })}
     </span>`);
 
@@ -177,7 +176,7 @@ function renderGreeting(user, stats = {}) {
         </div>
         <button class="widget-customize-btn" id="dashboard-customize-btn"
                 aria-label="${t('dashboard.customize')}" title="${t('dashboard.customize')}">
-          <i data-lucide="settings-2" style="width:16px;height:16px" aria-hidden="true"></i>
+          <i data-lucide="settings-2" class="icon-base" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -358,7 +357,8 @@ const WEATHER_ICON_BASE = '/api/v1/weather/icon/';
 function renderWeatherWidget(weather) {
   if (!weather) return '';
 
-  const { city, current, forecast } = weather;
+  const { city, current, forecast, units } = weather;
+  const unitSymbol = units === 'imperial' ? '°F' : units === 'standard' ? 'K' : '°C';
 
   const forecastHtml = forecast.map((d, i) => {
     const date = new Date(d.date + 'T12:00:00');
@@ -379,12 +379,12 @@ function renderWeatherWidget(weather) {
   return `
     <div class="widget weather-widget" id="weather-widget">
       <button class="weather-widget__refresh" id="weather-refresh-btn" aria-label="${t('dashboard.weatherRefresh')}" title="${t('dashboard.weatherRefreshTitle')}">
-        <i data-lucide="refresh-cw" style="width:14px;height:14px;" aria-hidden="true"></i>
+        <i data-lucide="refresh-cw" class="icon-md" aria-hidden="true"></i>
       </button>
       <div class="weather-widget__inner">
         <div class="weather-widget__main">
           <div class="weather-widget__left">
-            <div class="weather-widget__temp">${esc(current.temp)}°C</div>
+            <div class="weather-widget__temp">${esc(current.temp)}${unitSymbol}</div>
             <div class="weather-widget__desc">${esc(current.desc)}</div>
             <div class="weather-widget__city">${esc(city)}</div>
             <div class="weather-widget__meta">
@@ -510,11 +510,11 @@ function openCustomizeModal(currentConfig, onSave) {
           <div class="customize-row__actions">
             <button class="customize-row__btn" data-move="up" data-id="${w.id}"
                     ${isFirst ? 'disabled' : ''} aria-label="${t('dashboard.customizeMoveUp')}">
-              <i data-lucide="chevron-up" style="width:14px;height:14px" aria-hidden="true"></i>
+              <i data-lucide="chevron-up" class="icon-md" aria-hidden="true"></i>
             </button>
             <button class="customize-row__btn" data-move="down" data-id="${w.id}"
                     ${isLast ? 'disabled' : ''} aria-label="${t('dashboard.customizeMoveDown')}">
-              <i data-lucide="chevron-down" style="width:14px;height:14px" aria-hidden="true"></i>
+              <i data-lucide="chevron-down" class="icon-md" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -624,15 +624,9 @@ export async function render(container, { user }) {
 
   container.innerHTML = `
     <div class="dashboard">
+      <h1 class="sr-only">${t('dashboard.title')}</h1>
       <div class="dashboard__grid">
-        <div class="widget-greeting" style="grid-column:1/-1">
-          <div class="widget-greeting__inner">
-            <div class="widget-greeting__content">
-              <div class="widget-greeting__title">${greeting(user.display_name)}</div>
-              <div class="widget-greeting__date">${formatDate(new Date())}</div>
-            </div>
-          </div>
-        </div>
+        ${renderGreeting(user, {})}
         ${skeletonWidget(3)}
         ${skeletonWidget(3)}
         ${skeletonWidget(2)}
@@ -671,9 +665,9 @@ export async function render(container, { user }) {
   };
 
   function rebuildGrid(cfg) {
-    const grid     = container.querySelector('.dashboard__grid');
-    const greeting = grid?.querySelector('.widget-greeting');
+    const grid = container.querySelector('.dashboard__grid');
     if (!grid) return;
+    const greeting = grid.querySelector('.widget-greeting');
     grid.replaceChildren(...(greeting ? [greeting] : []));
     grid.insertAdjacentHTML('beforeend', renderWidgets(cfg, data, weather));
     wireLinks(container);
@@ -681,20 +675,14 @@ export async function render(container, { user }) {
     wireWeatherRefresh(container);
   }
 
-  container.innerHTML = `
-    <div class="dashboard">
-      <h1 class="sr-only">${t('dashboard.title')}</h1>
-      <div class="dashboard__grid">
-        ${renderGreeting(user, stats)}
-        ${renderWidgets(widgetConfig, data, weather)}
-      </div>
-    </div>
-    ${renderFab()}
-  `;
+  // Greeting in-place aktualisieren (Stats-Chips hinzufügen), kein Gesamt-Reset
+  const greetingEl = container.querySelector('.widget-greeting');
+  if (greetingEl) greetingEl.outerHTML = renderGreeting(user, stats);
 
-  wireLinks(container);
+  // Skeletons durch echte Widgets ersetzen
+  rebuildGrid(widgetConfig);
+
   initFab(container, _fabController.signal);
-  if (window.lucide) window.lucide.createIcons();
 
   container.querySelector('#dashboard-customize-btn')?.addEventListener(
     'click',
@@ -704,8 +692,6 @@ export async function render(container, { user }) {
     }),
     { signal: _fabController.signal },
   );
-
-  wireWeatherRefresh(container);
 
   // 30-Minuten Auto-Refresh für Wetter
   const refreshBtn = container.querySelector('#weather-refresh-btn');

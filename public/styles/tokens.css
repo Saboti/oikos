@@ -415,15 +415,11 @@
 /* ================================================================
  * Dark Mode — private Tokens überschreiben, öffentliche API bleibt stabil.
  *
- * Beide Selektoren überschreiben nur --_private Tokens. Die öffentlichen
- * --color-* / --module-* / --glass-* Tokens müssen nie angefasst werden.
- *
- * (1) System-Preference — greift, wenn kein data-theme gesetzt ist.
- * (2) Manueller Override — greift, wenn JS data-theme="dark" setzt
- *     (auch bei System in Light-Mode).
+ * data-theme="dark" wird durch das Head-Script in index.html gesetzt —
+ * sowohl für manuelle Overrides als auch für System-Präferenz (via
+ * matchMedia-Listener). Ein einziger Selektor reicht, kein @media-Duplikat.
  * ================================================================ */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+[data-theme="dark"] {
     /* Neutral-Skala invertiert (warm-dunkel) */
     --_neutral-50:  #1A1A18;
     --_neutral-100: #222220;
@@ -519,95 +515,6 @@
     --_glass-bg-input:        rgba(34, 34, 32, 0.45);
     --_glass-bg-toolbar:      rgba(40, 40, 38, 0.55);
     --_glass-tint-strength:   8%;
-  }
-}
-
-/* Manueller Dark-Mode-Override: data-theme="dark" auf <html> (auch bei System in Light-Mode) */
-:root[data-theme="dark"] {
-  --_neutral-50:  #1A1A18;
-  --_neutral-100: #222220;
-  --_neutral-150: #2A2A28;
-  --_neutral-200: #333331;
-  --_neutral-250: #3D3D3A;
-  --_neutral-300: #48484A;
-  --_neutral-400: #636360;
-  --_neutral-500: #8E8D89;
-  --_neutral-600: #AEADB0;
-  --_neutral-700: #C8C7C3;
-  --_neutral-800: #E2E1DC;
-  --_neutral-900: #F5F4F1;
-  --_neutral-950: #FAFAF8;
-
-  --_color-surface:   #2A2A28;
-  --_color-surface-3: #333331;
-
-  --_sidebar-bg:           #1A1A18;
-  --_sidebar-shadow-light: rgba(255, 255, 255, 0.04);
-  --_sidebar-shadow-dark:  rgba(0, 0, 0, 0.4);
-
-  --_color-accent:            #818CF8;
-  --_color-accent-hover:      #6366F1;
-  --_color-accent-active:     #4F46E5;
-  --_color-accent-light:      #2E2D5B;
-  --_color-accent-subtle:     #252255;
-  --_color-btn-primary:       #6366F1;
-  --_color-btn-primary-hover: #4F46E5;
-  --_color-accent-secondary:  #A78BFA;
-
-  --_color-success:       #4ADE80;
-  --_color-warning:       #F59E0B;
-  --_color-danger:        #FCA5A5;
-  --_color-text-tertiary: #A3A3A0;
-  --_color-success-light: #1A3325;
-  --_color-warning-light: #332400;
-  --_color-danger-light:  #3D1C1A;
-  --_color-info-light:    #1A2D40;
-
-  --_module-dashboard: #818CF8;
-  --_module-tasks:     #4ADE80;
-  --_module-calendar:  #A78BFA;
-  --_module-meals:     #FB923C;
-  --_module-shopping:  #F472B6;
-  --_module-notes:     #FCD34D;
-  --_module-contacts:  #60A5FA;
-  --_module-budget:    #2DD4BF;
-  --_module-settings:  #94A3B8;
-
-  --_meal-breakfast:       #F59E0B;
-  --_meal-breakfast-light: #332400;
-  --_meal-lunch-light:     #1A3325;
-  --_meal-dinner:          #818CF8;
-  --_meal-dinner-light:    #2E2D5B;
-  --_meal-snack-light:     #3D2010;
-
-  --_color-priority-none-bg:   rgba(142, 141, 137, 0.12);
-  --_color-priority-low-bg:    rgba(142, 141, 137, 0.18);
-  --_color-priority-medium-bg: rgba(230, 147, 10, 0.18);
-  --_color-priority-high-bg:   rgba(212, 81, 30, 0.18);
-  --_color-priority-urgent-bg: rgba(229, 83, 75, 0.18);
-
-  --_color-overlay:       rgba(0, 0, 0, 0.6);
-  --_color-overlay-light: rgba(0, 0, 0, 0.35);
-
-  --_shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
-  --_shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
-  --_shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.45);
-
-  --_glass-bg:               rgba(40, 40, 38, 0.75);
-  --_glass-bg-hover:         rgba(50, 50, 48, 0.82);
-  --_glass-bg-elevated:      rgba(58, 58, 55, 0.90);
-  --_glass-border:           rgba(255, 255, 255, 0.12);
-  --_glass-border-subtle:    rgba(255, 255, 255, 0.07);
-  --_glass-highlight:        rgba(255, 255, 255, 0.10);
-  --_glass-highlight-subtle: rgba(255, 255, 255, 0.06);
-  --_glass-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  --_glass-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(255, 255, 255, 0.07);
-  --_glass-shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
-  --_glass-bg-card:          rgba(38, 38, 36, 0.50);
-  --_glass-bg-card-hover:    rgba(48, 48, 46, 0.62);
-  --_glass-bg-input:         rgba(34, 34, 32, 0.45);
-  --_glass-bg-toolbar:       rgba(40, 40, 38, 0.55);
-  --_glass-tint-strength:    8%;
 }
 
 /* ================================================================

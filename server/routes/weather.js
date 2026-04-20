@@ -74,7 +74,8 @@ router.get('/', async (req, res) => {
     }
 
     const data = {
-      city: currentJson.name,
+      city:  currentJson.name,
+      units,
       current: {
         temp:       Math.round(currentJson.main.temp),
         feels_like: Math.round(currentJson.main.feels_like),
