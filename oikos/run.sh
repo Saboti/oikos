@@ -6,10 +6,16 @@ set -e
 # ── Permissions ──────────────────────────────────────────────────────────────
 chown -R node:node /data
 
-# ── Auto-generate secrets on first run ──────────────────────────────────────
+# ── Auto-generate secrets on first run (or if previous generation failed) ───
 SECRETS_FILE="/data/secrets.env"
-if [ ! -f "$SECRETS_FILE" ]; then
-    echo "[oikos] First run: generating SESSION_SECRET and DB_ENCRYPTION_KEY …"
+_needs_secrets=1
+if [ -f "$SECRETS_FILE" ]; then
+    # shellcheck source=/dev/null
+    . "$SECRETS_FILE"
+    [ -n "$SESSION_SECRET" ] && [ -n "$DB_ENCRYPTION_KEY" ] && _needs_secrets=0
+fi
+if [ "$_needs_secrets" = "1" ]; then
+    echo "[oikos] Generating SESSION_SECRET and DB_ENCRYPTION_KEY …"
     printf 'SESSION_SECRET=%s\nDB_ENCRYPTION_KEY=%s\n' \
         "$(node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))")" \
         "$(node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))")" \
