@@ -31,19 +31,19 @@ const STATUSES = () => [
 ];
 
 const CATEGORIES = [
-  'Haushalt', 'Schule', 'Einkauf', 'Reparatur',
-  'Gesundheit', 'Finanzen', 'Freizeit', 'Sonstiges',
+  'household', 'school', 'shopping', 'repair',
+  'health', 'finance', 'leisure', 'misc',
 ];
 
 const CATEGORY_LABELS = () => ({
-  'Haushalt':    t('tasks.categoryHousehold'),
-  'Schule':      t('tasks.categorySchool'),
-  'Einkauf':     t('tasks.categoryShopping'),
-  'Reparatur':   t('tasks.categoryRepair'),
-  'Gesundheit':  t('tasks.categoryHealth'),
-  'Finanzen':    t('tasks.categoryFinance'),
-  'Freizeit':    t('tasks.categoryLeisure'),
-  'Sonstiges':   t('tasks.categoryMisc'),
+  'household': t('tasks.categoryHousehold'),
+  'school':    t('tasks.categorySchool'),
+  'shopping':  t('tasks.categoryShopping'),
+  'repair':    t('tasks.categoryRepair'),
+  'health':    t('tasks.categoryHealth'),
+  'finance':   t('tasks.categoryFinance'),
+  'leisure':   t('tasks.categoryLeisure'),
+  'misc':      t('tasks.categoryMisc'),
 });
 
 const PRIORITY_LABELS = () => Object.fromEntries(PRIORITIES().map((p) => [p.value, p.label]));
@@ -180,7 +180,7 @@ function renderTaskCard(task, opts = {}) {
             ${renderPriorityBadge(task.priority)}
             ${renderDueDate(task.due_date)}
             ${task.is_recurring ? `<span class="due-date" aria-label="${t('tasks.recurring')}"><i data-lucide="repeat" class="icon-sm" aria-hidden="true"></i></span>` : ''}
-            ${task.category !== 'Sonstiges' ? `<span class="due-date">${CATEGORY_LABELS()[task.category] ?? task.category}</span>` : ''}
+            ${task.category !== 'misc' ? `<span class="due-date">${CATEGORY_LABELS()[task.category] ?? task.category}</span>` : ''}
           </div>
         </div>
 
@@ -355,13 +355,14 @@ function renderModalContent({ task = null, users = [], reminder = null } = {}) {
 // --------------------------------------------------------
 
 let state = {
-  tasks:         [],
-  users:         [],
-  filters:       { status: '', priority: '', assigned_to: '' },
-  groupMode:     'category',   // 'category' | 'due'
-  viewMode:      'list',       // 'list' | 'kanban' (resolved at render time)
-  expandedTasks: new Set(),
-  dragTaskId:    null,
+  tasks:           [],
+  users:           [],
+  filters:         { status: '', priority: '', assigned_to: '' },
+  groupMode:       'category',   // 'category' | 'due'
+  viewMode:        'list',       // 'list' | 'kanban' (resolved at render time)
+  expandedTasks:   new Set(),
+  dragTaskId:      null,
+  filterPanelOpen: false,
 };
 
 // --------------------------------------------------------
@@ -882,50 +883,149 @@ function renderTaskList(container) {
 }
 
 function renderFilters(container) {
-  const bar = container.querySelector('#filter-bar');
-  if (!bar) return;
+  const bar   = container.querySelector('#filter-bar');
+  const panel = container.querySelector('#filter-panel');
+  if (!bar || !panel) return;
 
-  const chips = [];
   const statusLabels   = STATUS_LABELS();
   const priorityLabels = PRIORITY_LABELS();
+  const activeCount    = [state.filters.status, state.filters.priority, state.filters.assigned_to]
+    .filter(Boolean).length;
+
+  // ---- Chip-Leiste: nur aktive Filter + Toggle-Button ----
+  bar.replaceChildren();
+
   if (state.filters.status) {
-    chips.push(`<span class="filter-chip filter-chip--active" data-filter="status">
-      ${statusLabels[state.filters.status]}
-      <span class="filter-chip__remove" aria-hidden="true">×</span>
-    </span>`);
+    const chip = document.createElement('span');
+    chip.className = 'filter-chip filter-chip--active';
+    chip.dataset.filter = 'status';
+    chip.textContent = statusLabels[state.filters.status];
+    const rm = document.createElement('span');
+    rm.className = 'filter-chip__remove';
+    rm.setAttribute('aria-hidden', 'true');
+    rm.textContent = '×';
+    chip.appendChild(rm);
+    bar.appendChild(chip);
   }
   if (state.filters.priority) {
-    chips.push(`<span class="filter-chip filter-chip--active" data-filter="priority">
-      ${priorityLabels[state.filters.priority]}
-      <span class="filter-chip__remove" aria-hidden="true">×</span>
-    </span>`);
+    const chip = document.createElement('span');
+    chip.className = 'filter-chip filter-chip--active';
+    chip.dataset.filter = 'priority';
+    chip.textContent = priorityLabels[state.filters.priority];
+    const rm = document.createElement('span');
+    rm.className = 'filter-chip__remove';
+    rm.setAttribute('aria-hidden', 'true');
+    rm.textContent = '×';
+    chip.appendChild(rm);
+    bar.appendChild(chip);
   }
   if (state.filters.assigned_to) {
     const u = state.users.find((u) => u.id === Number(state.filters.assigned_to));
-    chips.push(`<span class="filter-chip filter-chip--active" data-filter="assigned_to">
-      ${u?.display_name ?? 'Person'}
-      <span class="filter-chip__remove" aria-hidden="true">×</span>
-    </span>`);
+    const chip = document.createElement('span');
+    chip.className = 'filter-chip filter-chip--active';
+    chip.dataset.filter = 'assigned_to';
+    chip.textContent = u?.display_name ?? t('tasks.filterGroupPerson');
+    const rm = document.createElement('span');
+    rm.className = 'filter-chip__remove';
+    rm.setAttribute('aria-hidden', 'true');
+    rm.textContent = '×';
+    chip.appendChild(rm);
+    bar.appendChild(chip);
   }
 
-  // Inaktive Filter-Chips (zum Aktivieren)
-  if (!state.filters.status) {
-    STATUSES().forEach((s) => {
-      chips.push(`<span class="filter-chip" data-filter="status" data-value="${s.value}">${s.label}</span>`);
-    });
-  }
-  if (!state.filters.priority) {
-    PRIORITIES().forEach((p) => {
-      chips.push(`<span class="filter-chip" data-filter="priority" data-value="${p.value}">${p.label}</span>`);
-    });
-  }
-  if (!state.filters.assigned_to && state.users.length > 1) {
-    state.users.forEach((u) => {
-      chips.push(`<span class="filter-chip" data-filter="assigned_to" data-value="${u.id}">${u.display_name}</span>`);
-    });
+  const toggleBtn = document.createElement('button');
+  toggleBtn.id = 'filter-toggle-btn';
+  toggleBtn.className = `filter-toggle-btn${state.filterPanelOpen ? ' filter-toggle-btn--open' : ''}${activeCount > 0 ? ' filter-toggle-btn--active' : ''}`;
+  toggleBtn.setAttribute('aria-expanded', String(state.filterPanelOpen));
+  toggleBtn.setAttribute('aria-controls', 'filter-panel');
+
+  const iconWrap = document.createElement('i');
+  iconWrap.setAttribute('data-lucide', 'sliders-horizontal');
+  iconWrap.className = 'icon-sm';
+  iconWrap.setAttribute('aria-hidden', 'true');
+  toggleBtn.appendChild(iconWrap);
+
+  const label = document.createElement('span');
+  label.textContent = t('tasks.filterBtn');
+  toggleBtn.appendChild(label);
+
+  if (activeCount > 0) {
+    const badge = document.createElement('span');
+    badge.className = 'filter-toggle-btn__count';
+    badge.textContent = String(activeCount);
+    toggleBtn.appendChild(badge);
   }
 
-  bar.innerHTML = chips.join('');
+  bar.appendChild(toggleBtn);
+  if (window.lucide) window.lucide.createIcons({ el: bar });
+
+  // ---- Filter-Panel: Gruppen mit allen Optionen ----
+  panel.hidden = !state.filterPanelOpen;
+  panel.replaceChildren();
+
+  if (state.filterPanelOpen) {
+    const groups = [
+      {
+        key: 'status',
+        label: t('tasks.filterGroupStatus'),
+        items: STATUSES().map((s) => ({ value: s.value, label: s.label })),
+      },
+      {
+        key: 'priority',
+        label: t('tasks.filterGroupPriority'),
+        items: PRIORITIES().map((p) => ({ value: p.value, label: p.label })),
+      },
+    ];
+    if (state.users.length > 1) {
+      groups.push({
+        key: 'assigned_to',
+        label: t('tasks.filterGroupPerson'),
+        items: state.users.map((u) => ({ value: String(u.id), label: u.display_name })),
+      });
+    }
+
+    groups.forEach((group) => {
+      const section = document.createElement('div');
+      section.className = 'filter-panel__group';
+
+      const heading = document.createElement('div');
+      heading.className = 'filter-panel__label';
+      heading.textContent = group.label;
+      section.appendChild(heading);
+
+      const row = document.createElement('div');
+      row.className = 'filter-panel__chips';
+
+      group.items.forEach((item) => {
+        const isActive = state.filters[group.key] === item.value;
+        const chip = document.createElement('span');
+        chip.className = `filter-chip${isActive ? ' filter-chip--active' : ''}`;
+        chip.dataset.filter = group.key;
+        chip.dataset.value = item.value;
+        chip.textContent = item.label;
+        if (isActive) {
+          const rm = document.createElement('span');
+          rm.className = 'filter-chip__remove';
+          rm.setAttribute('aria-hidden', 'true');
+          rm.textContent = '×';
+          chip.appendChild(rm);
+        }
+        row.appendChild(chip);
+      });
+
+      section.appendChild(row);
+      panel.appendChild(section);
+    });
+
+    if (activeCount > 0) {
+      const clearBtn = document.createElement('button');
+      clearBtn.className = 'filter-panel__clear';
+      clearBtn.id = 'filter-clear-all';
+      clearBtn.textContent = t('tasks.filterClearAll');
+      panel.appendChild(clearBtn);
+    }
+  }
+
   wireFilterChips(container);
 }
 
@@ -1135,6 +1235,20 @@ function maybeShowSwipeHint(container) {
 // --------------------------------------------------------
 
 function wireFilterChips(container) {
+  // Toggle-Button öffnet/schließt das Panel
+  container.querySelector('#filter-toggle-btn')?.addEventListener('click', () => {
+    state.filterPanelOpen = !state.filterPanelOpen;
+    renderFilters(container);
+  });
+
+  // Alle Filter zurücksetzen
+  container.querySelector('#filter-clear-all')?.addEventListener('click', async () => {
+    state.filters = { status: '', priority: '', assigned_to: '' };
+    renderFilters(container);
+    await loadTasks(container);
+  });
+
+  // Chip-Klicks (in Bar + Panel)
   container.querySelectorAll('[data-filter]').forEach((chip) => {
     chip.addEventListener('click', async () => {
       const filter = chip.dataset.filter;
@@ -1292,6 +1406,7 @@ export async function render(container, { user }) {
       </div>
 
       <div class="tasks-filters" id="filter-bar"></div>
+      <div class="filter-panel" id="filter-panel" hidden></div>
 
       <div id="task-list">
         ${[1,2,3].map(() => `

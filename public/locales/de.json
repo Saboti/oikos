@@ -154,7 +154,12 @@
     "listView": "Listenansicht",
     "kanbanView": "Kanban-Ansicht",
     "swipedDoneToast": "Als erledigt markiert.",
-    "swipedOpenToast": "Als offen markiert."
+    "swipedOpenToast": "Als offen markiert.",
+    "filterBtn": "Filter",
+    "filterGroupStatus": "Status",
+    "filterGroupPriority": "Priorität",
+    "filterGroupPerson": "Person",
+    "filterClearAll": "Alle Filter zurücksetzen"
   },
   "shopping": {
     "title": "Einkauf",

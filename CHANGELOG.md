@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.23] - 2026-04-20
+
+### Added
+- Tasks: filter bar replaced by a compact toggle panel — only active filter chips are shown inline; a "Filter" button (with active-count badge) opens a grouped panel with Status, Priority, and Person sections, plus a clear-all button
+
+### Changed
+- Tasks: category values stored in the database are now English keys (`household`, `school`, `shopping`, `repair`, `health`, `finance`, `leisure`, `misc`) instead of German strings — migration v9 converts all existing rows automatically; display labels are unchanged
+
 ## [0.20.22] - 2026-04-20
 
 ### Added
