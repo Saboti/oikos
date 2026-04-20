@@ -1,0 +1,34 @@
+configuration:
+  log_level:
+    name: Log level
+    description: Verbosity of server logs (visible in the Supervisor log panel).
+  weather_api_key:
+    name: OpenWeatherMap API key
+    description: Free API key from openweathermap.org for the dashboard weather widget.
+  weather_city:
+    name: Weather city
+    description: City name for the weather widget (e.g. "Berlin" or "New York").
+  weather_units:
+    name: Temperature units
+    description: "metric = °C · imperial = °F · kelvin = K"
+  weather_lang:
+    name: Weather language
+    description: Language code for weather descriptions (e.g. en, de, fr, es).
+  google_client_id:
+    name: Google Client ID
+    description: OAuth 2.0 client ID for two-way Google Calendar sync.
+  google_client_secret:
+    name: Google Client secret
+    description: OAuth 2.0 client secret for two-way Google Calendar sync.
+  google_redirect_uri:
+    name: Google redirect URI
+    description: "OAuth callback URL, e.g. https://your-domain.com/api/v1/calendar/google/callback"
+  apple_caldav_url:
+    name: Apple CalDAV URL
+    description: CalDAV server URL. Leave empty to use the iCloud default.
+  apple_username:
+    name: Apple ID username
+    description: Apple ID email address for iCloud calendar sync.
+  apple_app_password:
+    name: Apple app-specific password
+    description: App-specific password from appleid.apple.com – not your regular Apple ID password.
