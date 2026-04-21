@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.35] - 2026-04-21
+
+### Changed
+- HA add-on: Google Calendar and Apple iCloud CalDAV credentials removed from add-on options — configure calendar sync directly inside the app (Settings → Calendar)
+- HA add-on: removed `webui` button from add-on panel; access Oikos via the direct port URL instead
+
 ## [0.20.33] - 2026-04-20
 
 ### Fixed
