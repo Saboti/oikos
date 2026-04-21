@@ -67,6 +67,20 @@ APPLE_PASS=$(jq -r '.apple_app_password // ""' "$OPTIONS")
 [ -n "$APPLE_USER" ] && export APPLE_USERNAME="$APPLE_USER"
 [ -n "$APPLE_PASS" ] && export APPLE_APP_SPECIFIC_PASSWORD="$APPLE_PASS"
 
+# ── Auto-provision admin account (first run only) ───────────────────────────
+ADMIN_USER=$(jq -r '.admin_username // ""' "$OPTIONS")
+ADMIN_NAME=$(jq -r '.admin_display_name // ""' "$OPTIONS")
+ADMIN_PASS=$(jq -r '.admin_password // ""' "$OPTIONS")
+if [ -n "$ADMIN_USER" ] && [ -n "$ADMIN_PASS" ]; then
+    ADMIN_DISPLAY="${ADMIN_NAME:-$ADMIN_USER}"
+    echo "[oikos] Auto-provisioning admin account '${ADMIN_USER}' …"
+    gosu node node /app/setup.js \
+        --username "$ADMIN_USER" \
+        --display-name "$ADMIN_DISPLAY" \
+        --password "$ADMIN_PASS" \
+        --skip-if-exists || true
+fi
+
 # ── Drop privileges and start oikos ─────────────────────────────────────────
 echo "[oikos] Starting server on port $PORT …"
 exec gosu node node /app/server/index.js

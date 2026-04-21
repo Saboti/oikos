@@ -29,6 +29,9 @@ ingress_port: 3000
 # Empty strings are filtered out in run.sh before being exported as env vars.
 options:
   log_level: info
+  admin_username: ""
+  admin_display_name: ""
+  admin_password: ""
   weather_api_key: ""
   weather_city: ""
   weather_units: metric
@@ -42,6 +45,9 @@ options:
 
 schema:
   log_level: list(debug|info|warn|error)
+  admin_username: str
+  admin_display_name: str
+  admin_password: str
   weather_api_key: str
   weather_city: str
   weather_units: list(metric|imperial|kelvin)

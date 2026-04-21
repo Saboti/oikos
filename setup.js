@@ -16,9 +16,10 @@ function parseArgs() {
   const args = process.argv.slice(2);
   const result = {};
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--username')     result.username    = args[++i];
-    if (args[i] === '--display-name') result.displayName = args[++i];
-    if (args[i] === '--password')     result.password    = args[++i];
+    if (args[i] === '--username')       result.username      = args[++i];
+    if (args[i] === '--display-name')   result.displayName   = args[++i];
+    if (args[i] === '--password')       result.password      = args[++i];
+    if (args[i] === '--skip-if-exists') result.skipIfExists  = true;
   }
   return result;
 }
@@ -85,8 +86,12 @@ async function main() {
     .get();
 
   if (existingAdmin) {
-    if (nonInteractive) {
-      // In non-interactive mode always proceed to allow adding more admins
+    if (nonInteractive && cliArgs.skipIfExists) {
+      console.log('ℹ  Admin-Account bereits vorhanden, überspringe Setup.');
+      rl.close();
+      process.exit(0);
+    } else if (nonInteractive) {
+      // proceed – allows adding additional admins via CLI
     } else {
       console.log('ℹ  Es existiert bereits ein Admin-Account.\n');
       const proceed = await prompt('Trotzdem einen weiteren Admin anlegen? (j/N): ');

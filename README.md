@@ -100,7 +100,15 @@ https://github.com/Saboti/oikos
 
 **Settings → Add-ons → Add-on Store → ⋮ → Repositories**
 
-After installing and starting the addon, create the first admin account via the HA terminal (Settings → Add-ons → Terminal & SSH) or any SSH session:
+### First admin account
+
+**Option A — via addon configuration (recommended):**
+
+Set `admin_username`, `admin_display_name`, and `admin_password` in the addon's configuration tab before the first start. Oikos will create the admin account automatically on boot and skip it on every subsequent restart.
+
+**Option B — via terminal:**
+
+After the addon is running, open the HA terminal (Settings → Add-ons → Terminal & SSH) and run:
 
 ```bash
 docker exec $(docker ps -q --filter name=oikos) sh -c \
