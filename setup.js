@@ -80,6 +80,16 @@ async function main() {
 
   console.log('\n=== Oikos Setup ===\n');
 
+  if (!nonInteractive && !process.stdin.isTTY) {
+    console.error(
+      'Fehler: Kein Terminal (TTY) vorhanden.\n' +
+      'Bitte --username, --display-name und --password als Argumente übergeben:\n\n' +
+      '  node setup.js --username admin --display-name "Name" --password geheim\n'
+    );
+    rl.close();
+    process.exit(1);
+  }
+
   // Prüfen ob bereits Admin vorhanden
   const existingAdmin = db.get()
     .prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1")
