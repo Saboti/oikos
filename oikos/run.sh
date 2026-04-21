@@ -51,22 +51,6 @@ WEATHER_LANG=$(jq -r '.weather_lang // "en"' "$OPTIONS")
 export OPENWEATHER_UNITS="$WEATHER_UNITS"
 export OPENWEATHER_LANG="$WEATHER_LANG"
 
-# Google Calendar (OAuth)
-GOOGLE_ID=$(jq -r '.google_client_id // ""' "$OPTIONS")
-GOOGLE_SECRET=$(jq -r '.google_client_secret // ""' "$OPTIONS")
-GOOGLE_REDIRECT=$(jq -r '.google_redirect_uri // ""' "$OPTIONS")
-[ -n "$GOOGLE_ID" ]       && export GOOGLE_CLIENT_ID="$GOOGLE_ID"
-[ -n "$GOOGLE_SECRET" ]   && export GOOGLE_CLIENT_SECRET="$GOOGLE_SECRET"
-[ -n "$GOOGLE_REDIRECT" ] && export GOOGLE_REDIRECT_URI="$GOOGLE_REDIRECT"
-
-# Apple iCloud CalDAV
-APPLE_URL=$(jq -r '.apple_caldav_url // ""' "$OPTIONS")
-APPLE_USER=$(jq -r '.apple_username // ""' "$OPTIONS")
-APPLE_PASS=$(jq -r '.apple_app_password // ""' "$OPTIONS")
-[ -n "$APPLE_URL" ]  && export APPLE_CALDAV_URL="$APPLE_URL"
-[ -n "$APPLE_USER" ] && export APPLE_USERNAME="$APPLE_USER"
-[ -n "$APPLE_PASS" ] && export APPLE_APP_SPECIFIC_PASSWORD="$APPLE_PASS"
-
 # ── Auto-provision admin account (first run only) ───────────────────────────
 ADMIN_USER=$(jq -r '.admin_username // ""' "$OPTIONS")
 ADMIN_NAME=$(jq -r '.admin_display_name // ""' "$OPTIONS")

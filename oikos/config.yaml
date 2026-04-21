@@ -35,12 +35,6 @@ options:
   weather_city: ""
   weather_units: metric
   weather_lang: en
-  google_client_id: ""
-  google_client_secret: ""
-  google_redirect_uri: ""
-  apple_caldav_url: ""
-  apple_username: ""
-  apple_app_password: ""
 
 schema:
   log_level: list(debug|info|warn|error)
@@ -51,9 +45,3 @@ schema:
   weather_city: str
   weather_units: list(metric|imperial|kelvin)
   weather_lang: str
-  google_client_id: str
-  google_client_secret: str
-  google_redirect_uri: str
-  apple_caldav_url: str
-  apple_username: str
-  apple_app_password: str
