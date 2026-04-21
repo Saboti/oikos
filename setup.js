@@ -1,14 +1,27 @@
 /**
  * Modul: Setup-Script
  * Zweck: Erstmalige Einrichtung - ersten Admin-User anlegen.
- *        Wird einmalig nach dem ersten Start ausgeführt: `node setup.js`
- * Abhängigkeiten: server/db.js, bcrypt, dotenv
+ *        Interaktiv: `node setup.js`
+ *        Nicht-interaktiv: `node setup.js --username admin --display-name "Max" --password geheim`
+ * Abhängigkeiten: server/db.js, bcrypt
  */
 
 import readline from 'node:readline';
 import bcrypt from 'bcrypt';
 import * as db from './server/db.js';
 import os from 'node:os';
+
+// ── CLI-Argumente parsen ─────────────────────────────────────────────────────
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const result = {};
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--username')     result.username    = args[++i];
+    if (args[i] === '--display-name') result.displayName = args[++i];
+    if (args[i] === '--password')     result.password    = args[++i];
+  }
+  return result;
+}
 
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
@@ -61,6 +74,9 @@ function promptPassword(question) {
 }
 
 async function main() {
+  const cliArgs = parseArgs();
+  const nonInteractive = !!(cliArgs.username || cliArgs.password || cliArgs.displayName);
+
   console.log('\n=== Oikos Setup ===\n');
 
   // Prüfen ob bereits Admin vorhanden
@@ -69,39 +85,64 @@ async function main() {
     .get();
 
   if (existingAdmin) {
-    console.log('ℹ  Es existiert bereits ein Admin-Account.\n');
-    const proceed = await prompt('Trotzdem einen weiteren Admin anlegen? (j/N): ');
-    if (proceed.toLowerCase() !== 'j') {
-      console.log('Setup abgebrochen.');
-      rl.close();
-      process.exit(0);
+    if (nonInteractive) {
+      // In non-interactive mode always proceed to allow adding more admins
+    } else {
+      console.log('ℹ  Es existiert bereits ein Admin-Account.\n');
+      const proceed = await prompt('Trotzdem einen weiteren Admin anlegen? (j/N): ');
+      if (proceed.toLowerCase() !== 'j') {
+        console.log('Setup abgebrochen.');
+        rl.close();
+        process.exit(0);
+      }
     }
   }
 
   console.log('Admin-Account anlegen:\n');
 
-  const username = (await prompt('Benutzername: ')).trim();
-  if (!username || username.length < 3) {
-    console.error('Fehler: Benutzername muss mindestens 3 Zeichen lang sein.');
-    process.exit(1);
-  }
+  let username, displayName, password;
 
-  const displayName = (await prompt('Anzeigename (z.B. "Max Mustermann"): ')).trim();
-  if (!displayName) {
-    console.error('Fehler: Anzeigename darf nicht leer sein.');
-    process.exit(1);
-  }
+  if (nonInteractive) {
+    username    = (cliArgs.username    ?? '').trim();
+    displayName = (cliArgs.displayName ?? '').trim();
+    password    = cliArgs.password     ?? '';
 
-  const password = await promptPassword('Passwort: ');
-  if (password.length < 8) {
-    console.error('Fehler: Passwort muss mindestens 8 Zeichen lang sein.');
-    process.exit(1);
-  }
+    if (!username || username.length < 3) {
+      console.error('Fehler: --username muss mindestens 3 Zeichen lang sein.');
+      process.exit(1);
+    }
+    if (!displayName) {
+      console.error('Fehler: --display-name darf nicht leer sein.');
+      process.exit(1);
+    }
+    if (password.length < 8) {
+      console.error('Fehler: --password muss mindestens 8 Zeichen lang sein.');
+      process.exit(1);
+    }
+  } else {
+    username = (await prompt('Benutzername: ')).trim();
+    if (!username || username.length < 3) {
+      console.error('Fehler: Benutzername muss mindestens 3 Zeichen lang sein.');
+      process.exit(1);
+    }
 
-  const passwordConfirm = await promptPassword('Passwort bestätigen: ');
-  if (password !== passwordConfirm) {
-    console.error('Fehler: Passwörter stimmen nicht überein.');
-    process.exit(1);
+    displayName = (await prompt('Anzeigename (z.B. "Max Mustermann"): ')).trim();
+    if (!displayName) {
+      console.error('Fehler: Anzeigename darf nicht leer sein.');
+      process.exit(1);
+    }
+
+    password = await promptPassword('Passwort: ');
+    if (password.length < 8) {
+      console.error('Fehler: Passwort muss mindestens 8 Zeichen lang sein.');
+      process.exit(1);
+    }
+
+    const passwordConfirm = await promptPassword('Passwort bestätigen: ');
+    if (password !== passwordConfirm) {
+      console.error('Fehler: Passwörter stimmen nicht überein.');
+      process.exit(1);
+    }
   }
 
   const avatarColors = ['#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE', '#FF2D55'];

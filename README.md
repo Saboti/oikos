@@ -90,6 +90,28 @@ Then open `http://localhost:3000` and log in with the admin credentials you set 
 
 > **New to Docker?** The **[Installation Guide](docs/installation.md)** walks you through every step: From installing Docker to HTTPS setup, backups, and troubleshooting.
 
+## Home Assistant Addon
+
+Oikos is available as a Home Assistant addon. Add this repository to HA:
+
+```
+https://github.com/Saboti/oikos
+```
+
+**Settings → Add-ons → Add-on Store → ⋮ → Repositories**
+
+After installing and starting the addon, create the first admin account via the HA terminal (Settings → Add-ons → Terminal & SSH) or any SSH session:
+
+```bash
+docker exec $(docker ps -q --filter name=oikos) sh -c \
+  '. /data/secrets.env && DB_PATH=/data/oikos.db node /app/setup.js \
+  --username admin \
+  --display-name "Your Name" \
+  --password yourpassword'
+```
+
+Then open the Oikos web UI on port `3000` of your HA host and log in.
+
 ## Tech Stack
 
 <p>
